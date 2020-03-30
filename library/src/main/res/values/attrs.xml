@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TwoColorSwitch">
+        <attr name="tcs_trackColorOn" format="color" />
+        <attr name="tcs_trackColorOff" format="color" />
+        <attr name="tcs_thumbColor" format="color" />
+        <attr name="tcs_isChecked" format="boolean" />
+    </declare-styleable>
+</resources>
