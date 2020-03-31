@@ -3,6 +3,8 @@ Simple switch view library for Android
 
 [![](https://jitpack.io/v/naz013/two-color-switch.svg)](https://jitpack.io/#naz013/two-color-switch)
 
+Design by Samsad Rashid: [Dribble](https://dribbble.com/shots/6210176-DailyUI-015-On-Off-Switch)
+
 Screenshot
 
 <img src="https://github.com/naz013/two-color-switch/raw/master/res/banner.png" width="400" alt="Screenshot">
