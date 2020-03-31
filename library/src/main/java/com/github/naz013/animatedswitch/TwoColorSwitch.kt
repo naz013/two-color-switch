@@ -226,8 +226,13 @@ class TwoColorSwitch : View, Checkable {
             set(value) {
                 field = value
                 anchor.x = value
+                middleX = (rightAnchor - value) / 2f
             }
         var rightAnchor = 0.0f
+            set(value) {
+                field = value
+                middleX = (value - leftAnchor) / 2f
+            }
 
         @ColorInt
         var color: Int = 0
@@ -235,8 +240,16 @@ class TwoColorSwitch : View, Checkable {
                 field = value
                 paint.color = value
             }
+        @ColorInt
+        var colorInnerObject: Int = 0
+            set(value) {
+                field = value
+                paintInnerObject.color = value
+            }
 
+        private var middleX = 0f
         private val paint = Paint()
+        private val paintInnerObject = Paint()
         private val anchor = PointF()
         private val translatePropertyAnimX = object : FloatPropertyCompat<PointF>("thumb_x") {
             override fun setValue(point: PointF?, value: Float) {
@@ -256,21 +269,36 @@ class TwoColorSwitch : View, Checkable {
                 bounds.height() / 2f,
                 paint
             )
+            if (anchor.x >= middleX) {
+                canvas.drawCircle(
+                    bounds.centerX() + anchor.x,
+                    bounds.centerY(),
+                    bounds.height() / 3f,
+                    paintInnerObject
+                )
+            } else {
+                canvas.drawCircle(
+                    bounds.centerX() + anchor.x,
+                    bounds.centerY(),
+                    bounds.height() / 4f,
+                    paintInnerObject
+                )
+            }
         }
 
         fun animateOn() {
             if (rightAnchor == 0.0f) return
             SpringAnimation(anchor, translatePropertyAnimX, rightAnchor).apply {
-                spring.stiffness = SpringForce.STIFFNESS_LOW
-                spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
+                spring.stiffness = SpringForce.STIFFNESS_MEDIUM
+                spring.dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
                 start()
             }
         }
 
         fun animateOff() {
             SpringAnimation(anchor, translatePropertyAnimX, leftAnchor).apply {
-                spring.stiffness = SpringForce.STIFFNESS_LOW
-                spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
+                spring.stiffness = SpringForce.STIFFNESS_MEDIUM
+                spring.dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
                 start()
             }
         }
@@ -309,6 +337,7 @@ class TwoColorSwitch : View, Checkable {
             colorAnimation.duration = 250
             colorAnimation.addUpdateListener { animator ->
                 color = animator.animatedValue as Int
+                thumb.colorInnerObject = color
                 invalidate()
             }
             colorAnimation.start()
@@ -322,6 +351,7 @@ class TwoColorSwitch : View, Checkable {
             colorAnimation.duration = 250
             colorAnimation.addUpdateListener { animator ->
                 color = animator.animatedValue as Int
+                thumb.colorInnerObject = color
                 invalidate()
             }
             colorAnimation.start()
