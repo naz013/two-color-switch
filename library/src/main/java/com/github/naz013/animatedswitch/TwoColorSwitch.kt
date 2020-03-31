@@ -65,6 +65,12 @@ class TwoColorSwitch : View, Checkable {
         }
         super.setOnClickListener { toggle() }
 
+        if (isInEditMode) {
+            thumb.color = Color.BLACK
+            track.colorOn = Color.YELLOW
+            track.colorOff = Color.CYAN
+        }
+
         setChecked(checked)
         track.updateColor()
     }
@@ -225,7 +231,7 @@ class TwoColorSwitch : View, Checkable {
         var leftAnchor = 0.0f
             set(value) {
                 field = value
-                anchor.x = value
+                anchor = value
                 middleX = (rightAnchor - value) / 2f
             }
         var rightAnchor = 0.0f
@@ -240,6 +246,7 @@ class TwoColorSwitch : View, Checkable {
                 field = value
                 paint.color = value
             }
+
         @ColorInt
         var colorInnerObject: Int = 0
             set(value) {
@@ -248,37 +255,46 @@ class TwoColorSwitch : View, Checkable {
             }
 
         private var middleX = 0f
+        private var anchor = 0.0f
+            set(value) {
+                field = value
+
+                verticalRectDynamic.left = verticalRect.left + value
+                verticalRectDynamic.right = verticalRectDynamic.left + verticalRect.width()
+            }
+        private val verticalRect = RectF()
+        private val verticalRectDynamic = RectF()
+        private val cornerRadius = dp2px(5).toFloat()
         private val paint = Paint()
         private val paintInnerObject = Paint()
-        private val anchor = PointF()
-        private val translatePropertyAnimX = object : FloatPropertyCompat<PointF>("thumb_x") {
-            override fun setValue(point: PointF?, value: Float) {
-                point?.x = value
+        private val translatePropertyAnimX = object : FloatPropertyCompat<Float>("thumb_x") {
+            override fun setValue(point: Float?, value: Float) {
+                anchor = value
                 invalidate()
             }
 
-            override fun getValue(point: PointF?): Float {
-                return point?.x ?: bounds.left
+            override fun getValue(point: Float?): Float {
+                return point ?: bounds.left
             }
         }
 
         fun draw(canvas: Canvas) {
             canvas.drawCircle(
-                bounds.centerX() + anchor.x,
+                bounds.centerX() + anchor,
                 bounds.centerY(),
                 bounds.height() / 2f,
                 paint
             )
-            if (anchor.x >= middleX) {
-                canvas.drawCircle(
-                    bounds.centerX() + anchor.x,
-                    bounds.centerY(),
-                    bounds.height() / 3f,
+            if (anchor >= middleX) {
+                canvas.drawRoundRect(
+                    verticalRectDynamic,
+                    cornerRadius,
+                    cornerRadius,
                     paintInnerObject
                 )
             } else {
                 canvas.drawCircle(
-                    bounds.centerX() + anchor.x,
+                    bounds.centerX() + anchor,
                     bounds.centerY(),
                     bounds.height() / 4f,
                     paintInnerObject
@@ -303,8 +319,23 @@ class TwoColorSwitch : View, Checkable {
             }
         }
 
+        private fun refreshInnerObjects() {
+            val padding = bounds.height() / 4.5f
+
+            verticalRect.left = bounds.left + padding * 1.6f
+            verticalRect.top = bounds.top + padding
+            verticalRect.right = bounds.right - padding * 1.6f
+            verticalRect.bottom = bounds.bottom - padding
+
+            verticalRectDynamic.left = verticalRect.left + anchor
+            verticalRectDynamic.top = verticalRect.top
+            verticalRectDynamic.right = verticalRect.right + anchor
+            verticalRectDynamic.bottom = verticalRect.bottom
+        }
+
         fun updateAnchor() {
-            anchor.x = if (isChecked) rightAnchor else leftAnchor
+            anchor = if (isChecked) rightAnchor else leftAnchor
+            refreshInnerObjects()
         }
     }
 

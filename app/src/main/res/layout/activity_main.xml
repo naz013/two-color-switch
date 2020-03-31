@@ -5,13 +5,228 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.github.naz013.animatedswitch.TwoColorSwitch
-        android:id="@+id/switchView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tcs_isChecked="true"
-        app:tcs_thumbColor="#ffffff"
-        app:tcs_trackColorOff="#00ff00"
-        app:tcs_trackColorOn="#ff0000" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:text="two-color-switch library" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/infoButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="16dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_information" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:id="@+id/switchView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#df0054"
+            app:tcs_trackColorOn="#65c6c4" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#408ab4"
+            app:tcs_trackColorOn="#f16821" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#000000"
+            app:tcs_trackColorOff="#ffd2bb"
+            app:tcs_trackColorOn="#c9eec9" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#018790"
+            app:tcs_trackColorOn="#e61c5d" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#930077"
+            app:tcs_trackColorOn="#408ab4" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#34699a"
+            app:tcs_trackColorOn="#f77754" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <com.github.naz013.animatedswitch.TwoColorSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tcs_isChecked="true"
+            app:tcs_thumbColor="#ffffff"
+            app:tcs_trackColorOff="#00ff00"
+            app:tcs_trackColorOn="#ff0000" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 </LinearLayout>
