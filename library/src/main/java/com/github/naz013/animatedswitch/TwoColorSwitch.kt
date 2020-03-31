@@ -1,5 +1,7 @@
 package com.github.naz013.animatedswitch
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.*
@@ -21,10 +23,10 @@ import androidx.dynamicanimation.animation.SpringForce
 
 class TwoColorSwitch : View, Checkable {
 
-    private val paint = Paint()
     private val thumb = Thumb()
     private val track = Track()
     private var isChecked = false
+    var onStateChangeListener: OnStateChangeListener? = null
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -43,9 +45,49 @@ class TwoColorSwitch : View, Checkable {
     }
 
     private fun initView(context: Context, attrs: AttributeSet?) {
-
+        printLog("initView: ")
+        var checked = false
+        attrs?.let {
+            val a =
+                context.theme.obtainStyledAttributes(attrs, R.styleable.TwoColorSwitch, 0, 0)
+            try {
+                thumb.color = a.getColor(R.styleable.TwoColorSwitch_tcs_thumbColor, thumb.color)
+                track.colorOn =
+                    a.getColor(R.styleable.TwoColorSwitch_tcs_trackColorOn, track.colorOn)
+                track.colorOff =
+                    a.getColor(R.styleable.TwoColorSwitch_tcs_trackColorOff, track.colorOff)
+                checked = a.getBoolean(R.styleable.TwoColorSwitch_tcs_isChecked, isChecked)
+            } catch (e: Exception) {
+                printLog("initView: " + e.localizedMessage)
+            } finally {
+                a.recycle()
+            }
+        }
         super.setOnClickListener { toggle() }
+
+        setChecked(checked)
+        track.updateColor()
     }
+
+    fun setThumbColor(@ColorInt color: Int) {
+        thumb.color = color
+        invalidate()
+    }
+
+    @ColorInt
+    fun getThumbColor(): Int = thumb.color
+
+    fun setTrackColors(@ColorInt colorOn: Int, @ColorInt colorOff: Int) {
+        track.colorOn = colorOn
+        track.colorOff = colorOff
+        invalidate()
+    }
+
+    @ColorInt
+    fun getTrackColorOn(): Int = track.colorOn
+
+    @ColorInt
+    fun getTrackColorOff(): Int = track.colorOff
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -59,6 +101,7 @@ class TwoColorSwitch : View, Checkable {
 
     override fun toggle() {
         setChecked(!isChecked)
+        onStateChangeListener?.onStateChanged(isChecked)
     }
 
     override fun setChecked(checked: Boolean) {
@@ -82,18 +125,33 @@ class TwoColorSwitch : View, Checkable {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = dp2px(42)
+        val width = dp2px(72)
         setMeasuredDimension(width, height)
         calculateObjects(width, height)
     }
 
     private fun calculateObjects(width: Int, height: Int) {
+        printLog("calculateObjects: $width, $height")
 
-    }
+        val padding = dp2px(4).toFloat()
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
+        track.bounds.left = padding
+        track.bounds.top = padding
+        track.bounds.right = width.toFloat() - padding
+        track.bounds.bottom = height.toFloat() - padding
+
+        val thumbPadding = padding * 2f
+        val thumbHeight = track.bounds.height() - (thumbPadding * 2f)
+
+        thumb.bounds.left = track.bounds.left + thumbPadding
+        thumb.bounds.top = track.bounds.top + thumbPadding
+        thumb.bounds.right = thumb.bounds.left + thumbHeight
+        thumb.bounds.bottom = thumb.bounds.top + thumbHeight
+
+        thumb.leftAnchor = 0f
+        thumb.rightAnchor = track.bounds.right - thumbHeight - thumbPadding / 2f - thumbHeight
+        thumb.updateAnchor()
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
@@ -145,6 +203,8 @@ class TwoColorSwitch : View, Checkable {
     override fun setBackgroundTintMode(tintMode: PorterDuff.Mode?) {
     }
 
+    override fun getBackground(): Drawable? = null
+
     @Px
     private fun dp2px(dp: Int): Int {
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
@@ -161,7 +221,6 @@ class TwoColorSwitch : View, Checkable {
 
     private inner class Thumb {
 
-        private val anchor = PointF()
         var bounds: RectF = RectF()
         var leftAnchor = 0.0f
             set(value) {
@@ -172,7 +231,13 @@ class TwoColorSwitch : View, Checkable {
 
         @ColorInt
         var color: Int = 0
+            set(value) {
+                field = value
+                paint.color = value
+            }
 
+        private val paint = Paint()
+        private val anchor = PointF()
         private val translatePropertyAnimX = object : FloatPropertyCompat<PointF>("thumb_x") {
             override fun setValue(point: PointF?, value: Float) {
                 point?.x = value
@@ -185,10 +250,16 @@ class TwoColorSwitch : View, Checkable {
         }
 
         fun draw(canvas: Canvas) {
-
+            canvas.drawCircle(
+                bounds.centerX() + anchor.x,
+                bounds.centerY(),
+                bounds.height() / 2f,
+                paint
+            )
         }
 
         fun animateOn() {
+            if (rightAnchor == 0.0f) return
             SpringAnimation(anchor, translatePropertyAnimX, rightAnchor).apply {
                 spring.stiffness = SpringForce.STIFFNESS_LOW
                 spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
@@ -202,6 +273,10 @@ class TwoColorSwitch : View, Checkable {
                 spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
                 start()
             }
+        }
+
+        fun updateAnchor() {
+            anchor.x = if (isChecked) rightAnchor else leftAnchor
         }
     }
 
@@ -218,36 +293,48 @@ class TwoColorSwitch : View, Checkable {
         @ColorInt
         var color: Int = 0
 
-        private val colorPropertyAnim = object : FloatPropertyCompat<Track>("bg_color") {
-            override fun getValue(track: Track?): Float {
-                return track?.color?.toFloat() ?: colorOn.toFloat()
-            }
-
-            override fun setValue(track: Track?, value: Float) {
-                track?.color = value.toInt()
-                invalidate()
-            }
-        }
+        private val paint = Paint()
+        private val cornerRadius = dp2px(50).toFloat()
+        private var animator: ValueAnimator? = null
 
         fun draw(canvas: Canvas) {
-
+            paint.color = color
+            canvas.drawRoundRect(bounds, cornerRadius, cornerRadius, paint)
         }
 
         fun animateOn() {
-            SpringAnimation(this, colorPropertyAnim, colorOn.toFloat()).apply {
-                spring.stiffness = SpringForce.STIFFNESS_LOW
-                spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
-                start()
+            animator?.cancel()
+
+            val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), color, colorOn)
+            colorAnimation.duration = 250
+            colorAnimation.addUpdateListener { animator ->
+                color = animator.animatedValue as Int
+                invalidate()
             }
+            colorAnimation.start()
+            animator = colorAnimation
         }
 
         fun animateOff() {
-            SpringAnimation(this, colorPropertyAnim, colorOff.toFloat()).apply {
-                spring.stiffness = SpringForce.STIFFNESS_LOW
-                spring.dampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY
-                start()
+            animator?.cancel()
+
+            val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), color, colorOff)
+            colorAnimation.duration = 250
+            colorAnimation.addUpdateListener { animator ->
+                color = animator.animatedValue as Int
+                invalidate()
             }
+            colorAnimation.start()
+            animator = colorAnimation
         }
+
+        fun updateColor() {
+            color = if (isChecked) colorOn else colorOff
+        }
+    }
+
+    interface OnStateChangeListener {
+        fun onStateChanged(isChecked: Boolean)
     }
 
     private companion object {
