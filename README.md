@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     implementation 'com.github.naz013:two-color-switch:1.0'
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
 }
 ```
 
